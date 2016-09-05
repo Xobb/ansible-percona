@@ -18,6 +18,6 @@
           - dumpfile
 
 - name: Create Application user database
-  mysql_user: name={{  db_user }} password={{ db_user_password }} priv={{ db_name }}.*:ALL host={{ db_host }} state=present
+  mysql_user: name={{ db_user }} password={{ db_user_password }} priv={{ db_name }}.*:ALL host={{ db_host }} state=present
   tags:
           - createuserdatabase

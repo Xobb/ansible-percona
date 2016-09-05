@@ -1,20 +1,36 @@
 ---
 - name: Ensure MySQL server is uninstalled
-  action: apt pkg={{ item }} state=absent
+  action: apt pkg="mysql-{{ item }}" state=absent
   with_items:
-          - mysql-server-core-5.5
-          - mysql-client 
-          - mysql-client-5.5
-          - mysql-client-core-5.5
+          - server-5.5
+          - client-5.5
+          - server-5.6
+          - client-5.6
+          - server-5.7
+          - client-5.7
+          - client-core-5.7
+          - server-core-5.7
+
+- name: "Define libraries for perkona 5.5"
+  set_fact:
+      percona_lib: "libperconaserverclient18"
+  when: percona_version == "5.5"
+
+- name: "Define libraries for perkona 5.6"
+  set_fact:
+      percona_lib: "libperconaserverclient18.1"
+  when: percona_version == "5.6"
+
+- name: "Define libraries for perkona 5.7"
+  set_fact:
+      percona_lib: "libperconaserverclient20"
+  when: percona_version == "5.7"
 
 - name: Install percona database server
   action: apt pkg={{ item }} state=latest
   with_items:
-          - percona-server-server-5.5
-          - percona-server-client-5.5
-          - percona-toolkit
-          - percona-xtrabackup
-          - python-mysqldb
+         - "{{ percona_packages }}"
+         - "{{ percona_lib }}"
 
 - name: Copy .my.cnf file into the root home folder
   template: src=root-my-cnf.j2 dest=/root/.my.cnf owner=root mode=0600
@@ -23,15 +39,18 @@
   mysql_user: name=root host={{ item }} password={{ root_password }} login_user=root login_password={{ root_password }} check_implicit_admin=yes
   with_items:
           - "{{ ansible_hostname }}"
-          - 127.0.0.1
-          - localhost
+          - "127.0.0.1"
+          - "localhost"
+          - "::1"
+
 
 - name: Ensure anonymous users are not in the database
   mysql_user: name='' host={{ item }} state=absent
   with_items:
           - "{{ ansible_hostname }}"
-          - localhost
-
+          - "127.0.0.1"
+          - "localhost"
+          - "::1"
 - name: remove test database
   mysql_db: name=test state=absent
 
@@ -46,5 +65,6 @@
 
 - name: Write custom server configuration
   template: src=my.cnf.j2 dest=/etc/mysql/my.cnf owner=root mode=0644
+  when: generate_custom_mycnf == true
   notify:
           - restart percona
