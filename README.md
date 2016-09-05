@@ -16,6 +16,13 @@ Available variables are listed below with its default values.
 
 Define the MySQL root password, this password will be used to create a **/root/.my.cnf** to allow root mysql connections without password
 
+	percona_version: "5.7"
+	
+Define version Percona, if not defined will be installed "Percona 5.6" by default 
+
+In this release was disabled generation custom config file my.cnf for "Percona 5.6" and "Percona 5.7" (It'll be present in future releases playbook). 
+Some settings my.cnf file for "Percona 5.5" see below:
+
 	port: 3306
 	bind_address: 0.0.0.0
 
@@ -33,17 +40,8 @@ Define some values to tuning the database server
 	long_query_time: long_query_time      = 2
 	log_queries_not_using_indexes: log-queries-not-using-indexes
 
-If **sqldebug** is true this playbook will configure Percona MySQL with slow queries debug logs, if you want to disable this debug information you have to set **sqldebug: false**
 
-	create_app_db: true
-	db_name: mydatabase
-	db_collation: utf8_general_ci
-	db_user: myuser
-	db_user_password: anotherreallylongpassword
-	db_host: "%"
-	db_dump_file: ""
-
-If **create_app_db** is true this playbook will configura an application database, you can set a path for a SQL dump file if you want to restore data in the new application database
+If **create_app_db** is true this playbook will configure an application database, you can set a path for a SQL dump file if you want to restore data in the new application database
 
 ## Dependencies
 
@@ -56,6 +54,7 @@ None.
 	  user: vagrant
 	  sudo: true
 	  vars:
+		  - percona_version: "5.7"
 		  - db_name: mydb
 		  - db_user: myuser
 		  - db_host: localhost

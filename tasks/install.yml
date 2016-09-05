@@ -10,27 +10,12 @@
           - client-5.7
           - client-core-5.7
           - server-core-5.7
-
-- name: "Define libraries for perkona 5.5"
-  set_fact:
-      percona_lib: "libperconaserverclient18"
-  when: percona_version == "5.5"
-
-- name: "Define libraries for perkona 5.6"
-  set_fact:
-      percona_lib: "libperconaserverclient18.1"
-  when: percona_version == "5.6"
-
-- name: "Define libraries for perkona 5.7"
-  set_fact:
-      percona_lib: "libperconaserverclient20"
-  when: percona_version == "5.7"
+          - client
 
 - name: Install percona database server
   action: apt pkg={{ item }} state=latest
   with_items:
          - "{{ percona_packages }}"
-         - "{{ percona_lib }}"
 
 - name: Copy .my.cnf file into the root home folder
   template: src=root-my-cnf.j2 dest=/root/.my.cnf owner=root mode=0600
@@ -42,7 +27,6 @@
           - "127.0.0.1"
           - "localhost"
           - "::1"
-
 
 - name: Ensure anonymous users are not in the database
   mysql_user: name='' host={{ item }} state=absent
@@ -63,8 +47,9 @@
 - name: Create murmur_hash
   shell: /usr/bin/mysql -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'" && touch /var/log/libmurmur_udf.so.done creates=/var/log/libmurmur_udf.so.done
 
+### Posible generate custom my.cnf only for Percona 5.5 for other versions will be present in future releases playbook
 - name: Write custom server configuration
   template: src=my.cnf.j2 dest=/etc/mysql/my.cnf owner=root mode=0644
-  when: generate_custom_mycnf == true
+  when: generate_custom_mycnf == true and percona_version == "5.5"
   notify:
-          - restart percona
+         - restart percona
