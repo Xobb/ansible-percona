@@ -1,19 +1,17 @@
 ---
+# Define percona version
+percona_version: "5.6" #"5.5" or "5.7"
+
+# Define percona packages
+percona_packages:
+  - "percona-server-server-{{ percona_version }}"
+  - "percona-server-client-{{ percona_version }}"
+  - percona-toolkit
+  - percona-xtrabackup
+  - python-mysqldb
+
 # Define root password for percona server
 root_password: reallylongpassword
-
-# Some defaults variables for percona server config file
-port: 3306
-bind_address: 0.0.0.0
-max_allowed_packet: 16M
-key_buffer: 16M
-thread_stack: 192K
-thread_cache_size: 8
-# Uncomment following vars if you want to log queries
-sqldebug: true
-log_slow_queries: log_slow_queries    = /var/log/mysql/mysql-slow.log
-long_query_time: long_query_time      = 2
-log_queries_not_using_indexes: log-queries-not-using-indexes
 
 # Define is a database must be created
 create_app_db: true
@@ -23,3 +21,17 @@ db_user: myuser
 db_user_password: anotherreallylongpassword
 db_host: "%"
 db_dump_file: ""
+
+generate_custom_mycnf: true
+# Some defaults variables for percona server custom my.cnf config file
+port: 3306
+bind_address: 0.0.0.0
+max_allowed_packet: 16M
+key_buffer: 16M
+thread_stack: 192K
+thread_cache_size: 8
+# Uncomment following vars if you want to log queries
+sqldebug: true # for enable in custom setings file slow log queries
+log_slow_queries: /var/log/mysql/mysql-slow.log
+long_query_time: 2
+log_queries_not_using_indexes: 1
