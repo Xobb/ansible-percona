@@ -1,8 +1,8 @@
 ---
 # file: tasks/repo.tml
 
-- name: Obtaining percona public key
-  apt_key: url=http://www.percona.com/downloads/RPM-GPG-KEY-percona
+- name: Obtaining percona repo key
+  apt_key: keyserver={{ percona_repo_key_server }} id={{ percona_repo_key_id }}
           state=present
 
 - name: Adding percona repository
