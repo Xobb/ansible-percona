@@ -31,7 +31,11 @@ key_buffer: 16M
 thread_stack: 192K
 thread_cache_size: 8
 # Uncomment following vars if you want to log queries
-sqldebug: true # for enable in custom setings file slow log queries
+sqldebug: false # for enable in custom setings file slow log queries
 log_slow_queries: /var/log/mysql/mysql-slow.log
 long_query_time: 2
 log_queries_not_using_indexes: 1
+
+# Percona reposytory keyring for apt-key command
+percona_repo_key_id: "8507EFA5"
+percona_repo_key_server: "keyserver.ubuntu.com"
