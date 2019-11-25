@@ -1,27 +1,34 @@
 ---
 - name: Ensure MySQL server is uninstalled
-  action: apt pkg="mysql-{{ item }}" state=absent
-  with_items:
-          - server-5.5
-          - client-5.5
-          - server-5.6
-          - client-5.6
-          - server-5.7
-          - client-5.7
-          - client-core-5.7
-          - server-core-5.7
-          - client
+  apt:
+    state: absent
+    pkg:
+      - mysql-server-5.5
+      - mysql-client-5.5
+      - mysql-server-5.6
+      - mysql-client-5.6
+      - mysql-server-5.7
+      - mysql-client-5.7
+      - mysql-client-core-5.7
+      - mysql-server-core-5.7
+      - mysql-client
 
 - name: Install percona database server
-  action: apt pkg={{ item }} state=latest
-  with_items:
-         - "{{ percona_packages }}"
+  apt:
+    state: latest
+    pkg: "{{ percona_packages }}"
 
 - name: Copy .my.cnf file into the root home folder
   template: src=root-my-cnf.j2 dest=/root/.my.cnf owner=root mode=0600
 
 - name: Update MySQL root password
-  mysql_user: name=root host={{ item }} password={{ root_password }} login_user=root login_password={{ root_password }} check_implicit_admin=yes
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ root_password }}"
+    login_user: root
+    login_password: "{{ root_password }}"
+    check_implicit_admin: no
   with_items:
           - "{{ ansible_hostname }}"
           - "127.0.0.1"
