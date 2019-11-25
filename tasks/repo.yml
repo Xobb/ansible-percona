@@ -1,18 +1,8 @@
 ---
 # file: tasks/repo.tml
-
-- name: Obtaining percona repo key
-  apt_key: keyserver={{ percona_repo_key_server }} id={{ percona_repo_key_id }}
-          state=present
-
-- name: Adding percona repository
-  apt_repository: repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main'
-          state=present
-
-- name: Adding percona source repository
-  apt_repository: repo='deb-src http://repo.percona.com/apt {{ ansible_distribution_release }} main'
-          state=present
-
+- name: Install Percona repository packages
+  apt:
+    deb: https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb
 - name: Update apt cache
   apt: update_cache=yes
 
